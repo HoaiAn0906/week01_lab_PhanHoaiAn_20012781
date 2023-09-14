@@ -19,8 +19,18 @@
         <div class="col-md-3">
             <!-- Menu bên trái -->
             <ul class="list-group">
-                <li class="list-group-item"><a href="">Account</a></li>
-                <li class="list-group-item"><a href="">Role</a></li>
+                <li class="list-group-item">
+                    <form action="control-servlet" method="get">
+                        <button type="submit" class="btn btn-primary">Account</button>
+                        <input type="hidden" name="action" value="list_account">
+                    </form>
+                </li>
+                <li class="list-group-item">
+                    <form action="control-servlet" method="get">
+                        <button type="submit" class="btn btn-primary">Role</button>
+                        <input type="hidden" name="action" value="list_role">
+                    </form>
+                </li>
                 <li class="list-group-item"><a href="">Log</a></li>
             </ul>
         </div>
