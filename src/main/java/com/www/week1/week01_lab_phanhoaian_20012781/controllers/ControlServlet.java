@@ -123,20 +123,18 @@ public class ControlServlet extends HttpServlet {
             }else if(req.getParameter("status").equals("0")){
                 role.setStatus(Status.DEACTIVE);
             }
-            boolean res = false;
             try {
-                res = roleRepository.update(role);
-                if (res) {
-                    PrintWriter out = resp.getWriter();
-                    out.println("<script type=\"text/javascript\">");
-                    out.println("alert('Update success');");
-                    out.println("</script>");
-                    RequestDispatcher dispatcher = req.getRequestDispatcher("role/roles.jsp");
+                if (roleRepository.update(role)) {
+                    roleRepository.update(role);
+                    List<Role> listRole = roleRepository.getAll();
+                    req.setAttribute("listRole", listRole);
+                    RequestDispatcher dispatcher = req.getRequestDispatcher("/role/roles.jsp");
                     dispatcher.forward(req, resp);
                 } else {
                     PrintWriter out = resp.getWriter();
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('Update failed');");
+                    out.println("location='control-servlet?action=list_role';");
                     out.println("</script>");
                 }
             } catch (SQLException | ClassNotFoundException | ServletException e) {
