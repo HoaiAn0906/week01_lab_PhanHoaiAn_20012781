@@ -9,20 +9,21 @@
 <html>
 <head>
     <title>Title</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
 <div class="container">
     <div class="d-flex align-items-center justify-content-between">
-        <h1>Role Edit</h1>
-        <button type="button" class="btn btn-primary mt-2" onclick="window.location.href = 'control-servlet?action=listRole'">
+        <h1>Role Add</h1>
+        <button type="button" class="btn btn-primary mt-2"
+                onclick="window.location.href = 'control-servlet?action=listAccount'">
             <i class="fas fa-arrow-left"></i> Back
         </button>
     </div>
     <div class="row">
         <div class="col-md-2">
-            <!-- Menu bên trái -->
             <!-- Menu bên trái -->
             <ul class="list-group">
                 <li class="list-group-item">
@@ -41,31 +42,39 @@
             <div class="row">
                 <div class="col-md-10">
                     <div class="card">
-                        <div class="card-header">Edit role</div>
+                        <div class="card-header">Add Account</div>
                         <div class="card-body">
-                            <%
-                                Role role = (Role) request.getAttribute("role");
-                            %>
                             <form action="control-servlet" method="post">
-                                <input type="hidden" name="role_id" value="<%= role.getRoleId() %>">
                                 <div class="form-group">
-                                    <label for="role_name">Role Name</label>
-                                    <input type="text" class="form-control" id="role_name" name="role_name" value="<%= role.getRoleName() %>">
+                                    <label for="account_id">Account Id</label>
+                                    <input type="text" class="form-control" id="account_id" name="account_id" value="">
                                 </div>
                                 <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" name="description"><%= role.getDescription() %></textarea>
+                                    <label for="full_name">Account Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="number" class="form-control" id="phone" name="phone" value="">
                                 </div>
                                 <div class="form-group">
                                     <label for="status">Status</label>
                                     <select class="form-control" id="status" name="status">
-                                        <option value="1" <%= role.getStatus().getCode() == 1 ? "selected" : "" %>>Active</option>
-                                        <option value="0" <%= role.getStatus().getCode() == 0 ? "selected" : "" %>>DEACTIVATE</option>
-                                        <option value="-1" <%= role.getStatus().getCode() == -1 ? "selected" : "" %>>Delete</option>
+                                        <option value="1">Active</option>
+                                        <option value="0">DEACTIVATE</option>
+                                        <option value="-1">Delete</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
-                                <input type="hidden" name="action" value="editRole">
+                                <input type="hidden" name="action" value="addAccount">
                             </form>
                         </div>
                     </div>

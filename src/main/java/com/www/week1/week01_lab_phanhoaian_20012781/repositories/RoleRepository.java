@@ -98,6 +98,7 @@ public class RoleRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
+            System.out.println("id test" + id);
             String sql = "DELETE FROM role WHERE role_id = ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, id);

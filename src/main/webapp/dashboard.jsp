@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="./bootstrap.min.css">
 </head>
 <body>
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+</nav>
 <div class="container">
     <div class="d-flex align-items-center justify-content-between">
         <h1>Dashboard</h1>
@@ -23,22 +25,13 @@
             <!-- Menu bên trái -->
             <ul class="list-group">
                 <li class="list-group-item">
-                    <form action="control-servlet" method="get">
-                        <button type="submit" class="btn btn-primary">Dashboard</button>
-                        <input type="hidden" name="action" value="dashboard">
-                    </form>
+                    <a href="control-servlet?action=dashboard">Dashboard</a>
                 </li>
                 <li class="list-group-item">
-                    <form action="control-servlet" method="get">
-                        <button type="submit" class="btn btn-primary">Account</button>
-                        <input type="hidden" name="action" value="list_account">
-                    </form>
+                    <a href="control-servlet?action=listAccount">Account</a>
                 </li>
                 <li class="list-group-item">
-                    <form action="control-servlet" method="get">
-                        <button type="submit" class="btn btn-primary">Role</button>
-                        <input type="hidden" name="action" value="list_role">
-                    </form>
+                    <a href="control-servlet?action=listRole">Role</a>
                 </li>
                 <li class="list-group-item"><a href="">Log</a></li>
             </ul>

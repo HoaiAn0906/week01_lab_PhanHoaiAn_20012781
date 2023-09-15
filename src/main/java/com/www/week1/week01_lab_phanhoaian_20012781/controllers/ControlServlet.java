@@ -5,7 +5,6 @@ import com.www.week1.week01_lab_phanhoaian_20012781.models.Role;
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Status;
 import com.www.week1.week01_lab_phanhoaian_20012781.repositories.AccountRepository;
 import com.www.week1.week01_lab_phanhoaian_20012781.repositories.RoleRepository;
-import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,18 +25,18 @@ public class ControlServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         RoleRepository roleRepository = new RoleRepository();
+        AccountRepository accountRepository = new AccountRepository();
 
-        if (action.equals("list_role")) {
+        if (action.equals("listRole")) {
             try {
                 List<Role> listRole = roleRepository.getAll();
-                System.out.println("ls" + listRole);
                 req.setAttribute("listRole", listRole);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/role/roles.jsp");
                 dispatcher.forward(req, resp);
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        } else if (action.equals("edit_role")) {
+        } else if (action.equals("editRole")) {
             try {
                 Role role = roleRepository.getById(req.getParameter("id"));
                 req.setAttribute("role", role);
@@ -46,20 +45,28 @@ public class ControlServlet extends HttpServlet {
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        } else if (action.equals("delete_role")) {
+        } else if (action.equals("deleteRole")) {
             try {
-                roleRepository.delete(req.getParameter("id"));
-                resp.sendRedirect("control-servlet?action=list_role");
-                //show toast delete success
-                PrintWriter out = resp.getWriter();
-                out.println("<script type=\"text/javascript\">");
-                out.println("alert('Delete success');");
-                out.println("location='control-servlet?action=list_role';");
-                out.println("</script>");
+                boolean res = roleRepository.delete(String.valueOf(req.getParameter("id")));
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=listRole");
+                    //show toast delete success
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Delete success');");
+                    out.println("location='control-servlet?action=listRole';");
+                    out.println("</script>");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Delete failed');");
+                    out.println("location='control-servlet?action=listRole';");
+                    out.println("</script>");
+                }
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        } else if (action.equals("add_role")) {
+        } else if (action.equals("addRole")) {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/role/add_role.jsp");
             dispatcher.forward(req, resp);
         } else if (action.equals("dashboard")) {
@@ -79,6 +86,48 @@ public class ControlServlet extends HttpServlet {
             }
 
             RequestDispatcher dispatcher = req.getRequestDispatcher("index.jsp");
+            dispatcher.forward(req, resp);
+        } else if (action.equals("listAccount")) {
+            try {
+                List<Account> listAccount = accountRepository.getAll();
+                req.setAttribute("listAccount", listAccount);
+                RequestDispatcher dispatcher = req.getRequestDispatcher("/account/accounts.jsp");
+                dispatcher.forward(req, resp);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("editAccount")) {
+            try {
+                Optional<Account> account = accountRepository.getById(req.getParameter("id"));
+                req.setAttribute("account", account);
+                RequestDispatcher dispatcher = req.getRequestDispatcher("/account/edit_account.jsp");
+                dispatcher.forward(req, resp);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("deleteAccount")) {
+            try {
+                boolean res = accountRepository.delete(String.valueOf(req.getParameter("id")));
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=listAccount");
+                    //show toast delete success
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Delete success');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Delete failed');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("addAccount")) {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/account/add_account.jsp");
             dispatcher.forward(req, resp);
         }
     }
@@ -149,7 +198,7 @@ public class ControlServlet extends HttpServlet {
                 out.println("location='register.jsp';");
                 out.println("</script>");
             }
-        } else if (action.equals("edit_role")) {
+        } else if (action.equals("editRole")) {
             Role role = new Role();
             role.setRoleId(req.getParameter("role_id"));
             role.setRoleName(req.getParameter("role_name"));
@@ -164,18 +213,18 @@ public class ControlServlet extends HttpServlet {
             try {
                 boolean res = roleRepository.update(role);
                 if (res) {
-                    resp.sendRedirect("control-servlet?action=list_role");
+                    resp.sendRedirect("control-servlet?action=listRole");
                 } else {
                     PrintWriter out = resp.getWriter();
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('Update failed');");
-                    out.println("location='control-servlet?action=list_role';");
+                    out.println("location='control-servlet?action=listRole';");
                     out.println("</script>");
                 }
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        } else if (action.equals("add_role")) {
+        } else if (action.equals("addRole")) {
             Role role = new Role();
             role.setRoleId(req.getParameter("role_id"));
             role.setRoleName(req.getParameter("role_name"));
@@ -187,16 +236,66 @@ public class ControlServlet extends HttpServlet {
             } else {
                 role.setStatus(Status.DELETE);
             }
-            System.out.println("role" + role);
             try {
                 boolean res = roleRepository.add(role);
                 if (res) {
-                    resp.sendRedirect("control-servlet?action=list_role");
+                    resp.sendRedirect("control-servlet?action=listRole");
                 } else {
                     PrintWriter out = resp.getWriter();
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('Add failed');");
-                    out.println("location='control-servlet?action=list_role';");
+                    out.println("location='control-servlet?action=listRole';");
+                    out.println("</script>");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("addAccount")) {
+            Account account = new Account();
+            account.setAccountId(req.getParameter("account_id"));
+            account.setPassword(req.getParameter("password"));
+            account.setFullName(req.getParameter("full_name"));
+            account.setEmail(req.getParameter("email"));
+            account.setPhone(req.getParameter("phone"));
+            if(req.getParameter("status").equals("1")){
+                account.setStatus(Status.ACTIVE);
+            }else if(req.getParameter("status").equals("0")){
+                account.setStatus(Status.DEACTIVATE);
+            } else {
+                account.setStatus(Status.DELETE);
+            }
+            try {
+                boolean res = accountRepository.create(account);
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=listAccount");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Add failed');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("editAccount")) {
+            Account account = new Account();
+            account.setAccountId(req.getParameter("accountId"));
+            account.setPassword(req.getParameter("password"));
+            account.setFullName(req.getParameter("fullName"));
+            account.setEmail(req.getParameter("email"));
+            account.setPhone(req.getParameter("phone"));
+            Status status = Status.valueOf(req.getParameter("status"));
+            account.setStatus(status);
+            try {
+                boolean res = accountRepository.update(account);
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=listAccount");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Update failed');");
+                    out.println("location='control-servlet?action=listAccount';");
                     out.println("</script>");
                 }
             } catch (SQLException | ClassNotFoundException e) {

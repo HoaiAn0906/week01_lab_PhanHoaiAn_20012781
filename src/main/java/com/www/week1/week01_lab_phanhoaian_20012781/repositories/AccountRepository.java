@@ -17,7 +17,7 @@ public class AccountRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "Select * from Account";
+            String sql = "Select * from account";
             statement = con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -37,6 +37,7 @@ public class AccountRepository {
         Connection con;
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
+        System.out.println(account);
         try {
             String sql = "INSERT into account VALUES(?,?,?,?,?,?)";
             statement = con.prepareStatement(sql);
@@ -45,8 +46,7 @@ public class AccountRepository {
             statement.setString(3, account.getPassword());
             statement.setString(4, account.getEmail());
             statement.setString(5, account.getPhone());
-            Status accountStatus = account.getStatus();
-            statement.setInt(6, accountStatus.getCode());
+            statement.setInt(6, account.getStatus().getCode());
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
