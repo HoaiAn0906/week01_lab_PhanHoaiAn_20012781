@@ -15,7 +15,7 @@
 <body>
 <div class="container">
     <div class="d-flex align-items-center justify-content-between">
-        <h1>Role Edit</h1>
+        <h1>Role Add</h1>
         <button type="button" class="btn btn-primary mt-2" onclick="window.location.href = 'control-servlet?action=list_role'">
             <i class="fas fa-arrow-left"></i> Back
         </button>
@@ -49,31 +49,31 @@
             <div class="row">
                 <div class="col-md-10">
                     <div class="card">
-                        <div class="card-header">Edit role</div>
+                        <div class="card-header">Add role</div>
                         <div class="card-body">
-                            <%
-                                Role role = (Role) request.getAttribute("role");
-                            %>
                             <form action="control-servlet" method="post">
-                                <input type="hidden" name="role_id" value="<%= role.getRoleId() %>">
+                                <div class="form-group">
+                                    <label for="role_name">Role Id</label>
+                                    <input type="text" class="form-control" id="role_id" name="role_id" value="">
+                                </div>
                                 <div class="form-group">
                                     <label for="role_name">Role Name</label>
-                                    <input type="text" class="form-control" id="role_name" name="role_name" value="<%= role.getRoleName() %>">
+                                    <input type="text" class="form-control" id="role_name" name="role_name" value="">
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" name="description"><%= role.getDescription() %></textarea>
+                                    <textarea class="form-control" id="description" name="description"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="status">Status</label>
                                     <select class="form-control" id="status" name="status">
-                                        <option value="1" <%= role.getStatus().getCode() == 1 ? "selected" : "" %>>Active</option>
-                                        <option value="0" <%= role.getStatus().getCode() == 0 ? "selected" : "" %>>DEACTIVATE</option>
-                                        <option value="-1" <%= role.getStatus().getCode() == -1 ? "selected" : "" %>>Delete</option>
+                                        <option value="1">Active</option>
+                                        <option value="0">DEACTIVATE</option>
+                                        <option value="-1" >Delete</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
-                                <input type="hidden" name="action" value="edit_role">
+                                <input type="hidden" name="action" value="add_role">
                             </form>
                         </div>
                     </div>

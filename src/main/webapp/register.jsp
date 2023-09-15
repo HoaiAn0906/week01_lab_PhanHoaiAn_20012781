@@ -47,7 +47,7 @@
             <label for="status">Status:</label>
             <select class="form-control" id="status" name="status" required>
                 <option value="1">Active</option>
-                <option value="0">Deactive</option>
+                <option value="0">DEACTIVATE</option>
                 <option value="-1">Delete</option>
             </select>
         </div>
@@ -55,6 +55,7 @@
         <input type="submit" class="btn btn-primary" value="Register">
         <input type="hidden" name="action" value="register">
     </form>
+    <button class="btn btn-primary" onclick="window.location.href='index.jsp'">Login</button>
 </div>
 </body>
 </html>

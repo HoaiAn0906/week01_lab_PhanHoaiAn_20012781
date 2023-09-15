@@ -1,7 +1,7 @@
 package com.www.week1.week01_lab_phanhoaian_20012781.models;
 
 public class Account {
-    //status type tinyint (1-active, 0-deactive, -1-delete)
+    //status type tinyint (1-active, 0-DEACTIVATE, -1-delete)
     private String accountId;
     private String fullName;
     private String password;

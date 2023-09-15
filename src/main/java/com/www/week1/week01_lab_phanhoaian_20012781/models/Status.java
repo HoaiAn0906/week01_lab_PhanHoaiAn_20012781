@@ -2,7 +2,7 @@ package com.www.week1.week01_lab_phanhoaian_20012781.models;
 
 public enum Status {
     ACTIVE(1),
-    DEACTIVE(0),
+    DEACTIVATE(0),
     DELETE(-1);
 
     private final int code;

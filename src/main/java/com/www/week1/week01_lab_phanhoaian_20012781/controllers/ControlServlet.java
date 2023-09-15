@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,11 +50,35 @@ public class ControlServlet extends HttpServlet {
             try {
                 roleRepository.delete(req.getParameter("id"));
                 resp.sendRedirect("control-servlet?action=list_role");
+                //show toast delete success
+                PrintWriter out = resp.getWriter();
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Delete success');");
+                out.println("location='control-servlet?action=list_role';");
+                out.println("</script>");
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        } else if (action.equals("create_role")) {
-            RequestDispatcher dispatcher = req.getRequestDispatcher("create_role.jsp");
+        } else if (action.equals("add_role")) {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/role/add_role.jsp");
+            dispatcher.forward(req, resp);
+        } else if (action.equals("dashboard")) {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("dashboard.jsp");
+            dispatcher.forward(req, resp);
+        } else if (action.equals("logout")) {
+            // Lấy danh sách các cookie hiện tại
+            Cookie[] cookies = req.getCookies();
+            System.out.println("cookies" + cookies);
+
+            if (cookies != null) {
+                // Lặp qua từng cookie và đặt thời gian sống của nó thành 0 để xóa cookie
+                for (Cookie cookie : cookies) {
+                    cookie.setMaxAge(0);
+                    resp.addCookie(cookie);
+                }
+            }
+
+            RequestDispatcher dispatcher = req.getRequestDispatcher("index.jsp");
             dispatcher.forward(req, resp);
         }
     }
@@ -75,6 +100,17 @@ public class ControlServlet extends HttpServlet {
                     out.println("location='index.jsp';");
                     out.println("</script>");
                 } else {
+                    //save account to cookie
+                    Cookie account_id = new Cookie("account_id", account.get().getAccountId());
+                    Cookie full_name = new Cookie("full_name", account.get().getFullName());
+                    Cookie email = new Cookie("email", account.get().getEmail());
+                    Cookie phone = new Cookie("phone", account.get().getPhone());
+                    Cookie status = new Cookie("status", account.get().getStatus().toString());
+                    resp.addCookie(account_id);
+                    resp.addCookie(full_name);
+                    resp.addCookie(email);
+                    resp.addCookie(phone);
+                    resp.addCookie(status);
                     //information of account
 
                     // redirect dashboard and info account
@@ -121,15 +157,14 @@ public class ControlServlet extends HttpServlet {
             if(req.getParameter("status").equals("1")){
                 role.setStatus(Status.ACTIVE);
             }else if(req.getParameter("status").equals("0")){
-                role.setStatus(Status.DEACTIVE);
+                role.setStatus(Status.DEACTIVATE);
+            } else {
+                role.setStatus(Status.DELETE);
             }
             try {
-                if (roleRepository.update(role)) {
-                    roleRepository.update(role);
-                    List<Role> listRole = roleRepository.getAll();
-                    req.setAttribute("listRole", listRole);
-                    RequestDispatcher dispatcher = req.getRequestDispatcher("/role/roles.jsp");
-                    dispatcher.forward(req, resp);
+                boolean res = roleRepository.update(role);
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=list_role");
                 } else {
                     PrintWriter out = resp.getWriter();
                     out.println("<script type=\"text/javascript\">");
@@ -137,7 +172,34 @@ public class ControlServlet extends HttpServlet {
                     out.println("location='control-servlet?action=list_role';");
                     out.println("</script>");
                 }
-            } catch (SQLException | ClassNotFoundException | ServletException e) {
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("add_role")) {
+            Role role = new Role();
+            role.setRoleId(req.getParameter("role_id"));
+            role.setRoleName(req.getParameter("role_name"));
+            role.setDescription(req.getParameter("description"));
+            if(req.getParameter("status").equals("1")){
+                role.setStatus(Status.ACTIVE);
+            }else if(req.getParameter("status").equals("0")){
+                role.setStatus(Status.DEACTIVATE);
+            } else {
+                role.setStatus(Status.DELETE);
+            }
+            System.out.println("role" + role);
+            try {
+                boolean res = roleRepository.add(role);
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=list_role");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Add failed');");
+                    out.println("location='control-servlet?action=list_role';");
+                    out.println("</script>");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }

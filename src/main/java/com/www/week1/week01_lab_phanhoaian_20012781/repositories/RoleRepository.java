@@ -22,7 +22,7 @@ public class RoleRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "Select * from role";
+            String sql = "Select * from role order by role_name asc";
             statement = con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
