@@ -12,11 +12,29 @@
 </head>
 <body>
 <div class="container">
+    <%-- Lấy thông tin từ các cookie --%>
+    <% Cookie[] cookies = request.getCookies(); %>
+    <% String accountId = null, fullName = null, email = null, phone = null, status = null; %>
+    <% if (cookies != null) { %>
+    <% for (Cookie cookie : cookies) { %>
+    <% if ("full_name".equals(cookie.getName())) { %>
+    <% fullName = cookie.getValue(); %>
+    <% } else if ("email".equals(cookie.getName())) { %>
+    <% email = cookie.getValue(); %>
+    <% } else if ("phone".equals(cookie.getName())) { %>
+    <% phone = cookie.getValue(); %>
+    <% } else if ("status".equals(cookie.getName())) { %>
+    <% status = cookie.getValue(); %>
+    <% } else if ("account_id".equals(cookie.getName())) { %>
+    <% accountId = cookie.getValue(); %>
+    <% } %>
+    <% } %>
+    <% } %>
     <div class="d-flex align-items-center justify-content-between">
         <h1>Dashboard</h1>
         <!-- Logout Button -->
         <form action="control-servlet" method="get">
-            <button type="submit" class="btn btn-danger">Logout</button>
+            <button type="submit" class="btn btn-danger" onclick="window.location.href = 'control-servlet?action=logout&id=<%= accountId %>'">Logout</button>
             <input type="hidden" name="action" value="logout">
         </form>
     </div>
@@ -42,23 +60,6 @@
                     <div class="card">
                         <div class="card-header">Information Account</div>
                         <div class="card-body">
-                            <%-- Lấy thông tin từ các cookie --%>
-                            <% Cookie[] cookies = request.getCookies(); %>
-                            <% String fullName = null, email = null, phone = null, status = null; %>
-                            <% if (cookies != null) { %>
-                            <% for (Cookie cookie : cookies) { %>
-                            <% if ("full_name".equals(cookie.getName())) { %>
-                            <% fullName = cookie.getValue(); %>
-                            <% } else if ("email".equals(cookie.getName())) { %>
-                            <% email = cookie.getValue(); %>
-                            <% } else if ("phone".equals(cookie.getName())) { %>
-                            <% phone = cookie.getValue(); %>
-                            <% } else if ("status".equals(cookie.getName())) { %>
-                            <% status = cookie.getValue(); %>
-                            <% } %>
-                            <% } %>
-                            <% } %>
-
                             <%-- Hiển thị thông tin từ các cookie --%>
                             <p><strong>Full Name:</strong> <%= fullName %>
                             </p>

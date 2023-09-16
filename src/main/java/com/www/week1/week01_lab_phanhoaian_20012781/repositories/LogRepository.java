@@ -66,14 +66,25 @@ public class LogRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "insert into log(id, account_id, login_time, logout_time, notes) values(?, ?, ?, ?, ?)";
-            statement = con.prepareStatement(sql);
-            statement.setString(1, log.getId());
-            statement.setString(2, log.getAccount().getAccountId());
-            statement.setDate(3, java.sql.Date.valueOf(log.getLoginTime()));
-            statement.setDate(4, java.sql.Date.valueOf(log.getLogoutTime()));
-            statement.setString(5, log.getNotes());
-            statement.executeUpdate();
+            String sql;
+            if (log.getLoginTime() == null) {
+                sql = "insert into log(account_id, logout_time, notes) values(?, ?, ?)";
+                statement = con.prepareStatement(sql);
+                statement.setString(1, log.getAccount().getAccountId());
+                statement.setDate(2, java.sql.Date.valueOf(log.getLogoutTime()));
+                statement.setString(3, log.getNotes());
+                statement.executeUpdate();
+            } else {
+                sql = "insert into log(account_id, login_time, logout_time, notes) values(?, ?, ?, ?)";
+                statement = con.prepareStatement(sql);
+                statement.setString(1, log.getAccount().getAccountId());
+                statement.setDate(2, java.sql.Date.valueOf(log.getLoginTime()));
+                //set value null
+                statement.setDate(3, null);
+                statement.setString(4, log.getNotes());
+                statement.executeUpdate();
+            }
+
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,9 +1,12 @@
 package com.www.week1.week01_lab_phanhoaian_20012781.controllers;
 
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Account;
+import com.www.week1.week01_lab_phanhoaian_20012781.models.Logs;
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Role;
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Status;
 import com.www.week1.week01_lab_phanhoaian_20012781.repositories.AccountRepository;
+import com.www.week1.week01_lab_phanhoaian_20012781.repositories.GrantAccessRepository;
+import com.www.week1.week01_lab_phanhoaian_20012781.repositories.LogRepository;
 import com.www.week1.week01_lab_phanhoaian_20012781.repositories.RoleRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -12,6 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,6 +30,7 @@ public class ControlServlet extends HttpServlet {
         String action = req.getParameter("action");
         RoleRepository roleRepository = new RoleRepository();
         AccountRepository accountRepository = new AccountRepository();
+        GrantAccessRepository grantAccessRepository = new GrantAccessRepository();
 
         if (action.equals("listRole")) {
             try {
@@ -80,6 +85,7 @@ public class ControlServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
         } else if (action.equals("logout")) {
+            System.out.println(req.getParameter("id"));
             // Lấy danh sách các cookie hiện tại
             Cookie[] cookies = req.getCookies();
 
@@ -152,6 +158,8 @@ public class ControlServlet extends HttpServlet {
         String action = req.getParameter("action");
         AccountRepository accountRepository = new AccountRepository();
         RoleRepository roleRepository = new RoleRepository();
+        GrantAccessRepository grantAccessRepository = new GrantAccessRepository();
+        LogRepository logRepository = new LogRepository();
 
         if (action.equals("logon")) {
             try {
@@ -164,6 +172,12 @@ public class ControlServlet extends HttpServlet {
                     out.println("location='index.jsp';");
                     out.println("</script>");
                 } else {
+                    System.out.println(account);
+                    Logs log = new Logs();
+                    log.setAccount(account.get());
+                    log.setLoginTime(java.time.LocalDate.now());
+                    log.setNotes("login");
+                    logRepository.create(log);
                     //save account to cookie
                     Cookie account_id = new Cookie("account_id", account.get().getAccountId());
                     Cookie full_name = new Cookie("full_name", account.get().getFullName());
@@ -320,6 +334,26 @@ public class ControlServlet extends HttpServlet {
                     PrintWriter out = resp.getWriter();
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('Update failed');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (action.equals("grantPermission")) {
+            try {
+                boolean res = grantAccessRepository.grantPermission(req.getParameter("accountId"), req.getParameter("roleIds"), req.getParameter("grantType"), req.getParameter("note"));
+                if (res) {
+                    resp.sendRedirect("control-servlet?action=listAccount");
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Grant success');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                } else {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Grant failed');");
                     out.println("location='control-servlet?action=listAccount';");
                     out.println("</script>");
                 }

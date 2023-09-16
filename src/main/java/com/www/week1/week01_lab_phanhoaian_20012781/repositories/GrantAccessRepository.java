@@ -120,4 +120,27 @@ public class GrantAccessRepository {
             return false;
         }
     }
+
+    public boolean grantPermission(String accountId, String roleIds, String grantType, String note) throws SQLException, ClassNotFoundException {
+        Connection con;
+        con = ConnectDB.getInstance().getConnection();
+        PreparedStatement statement = null;
+        //get list roles frome roleIds string ","
+        String[] arrRoleIds = roleIds.split(",");
+        try {
+            String sql = "INSERT INTO grant_access(account_id, role_id, is_grant, note) VALUES (?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
+            for (String roleId : arrRoleIds) {
+                statement.setString(1, accountId);
+                statement.setString(2, roleId);
+                statement.setString(3, grantType);
+                statement.setString(4, note);
+                statement.executeUpdate();
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
