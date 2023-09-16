@@ -70,12 +70,18 @@ public class ControlServlet extends HttpServlet {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/role/add_role.jsp");
             dispatcher.forward(req, resp);
         } else if (action.equals("dashboard")) {
-            RequestDispatcher dispatcher = req.getRequestDispatcher("dashboard.jsp");
-            dispatcher.forward(req, resp);
+            //get role of account
+            try {
+                List<Role> listRoleByAccount = roleRepository.getRoleByAccount(req.getCookies()[0].getValue());
+                req.setAttribute("listRoleByAccount", listRoleByAccount);
+                RequestDispatcher dispatcher = req.getRequestDispatcher("dashboard.jsp");
+                dispatcher.forward(req, resp);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         } else if (action.equals("logout")) {
             // Lấy danh sách các cookie hiện tại
             Cookie[] cookies = req.getCookies();
-            System.out.println("cookies" + cookies);
 
             if (cookies != null) {
                 // Lặp qua từng cookie và đặt thời gian sống của nó thành 0 để xóa cookie
@@ -90,7 +96,9 @@ public class ControlServlet extends HttpServlet {
         } else if (action.equals("listAccount")) {
             try {
                 List<Account> listAccount = accountRepository.getAll();
+                List<Role> listRole = roleRepository.getAll();
                 req.setAttribute("listAccount", listAccount);
+                req.setAttribute("listRole", listRole);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/account/accounts.jsp");
                 dispatcher.forward(req, resp);
             } catch (SQLException | ClassNotFoundException e) {
@@ -99,7 +107,7 @@ public class ControlServlet extends HttpServlet {
         } else if (action.equals("editAccount")) {
             try {
                 Optional<Account> account = accountRepository.getById(req.getParameter("id"));
-                req.setAttribute("account", account);
+                req.setAttribute("account", account.get());
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/account/edit_account.jsp");
                 dispatcher.forward(req, resp);
             } catch (SQLException | ClassNotFoundException e) {
@@ -107,6 +115,13 @@ public class ControlServlet extends HttpServlet {
             }
         } else if (action.equals("deleteAccount")) {
             try {
+                if (req.getParameter("id").equals(req.getCookies()[0].getValue())) {
+                    PrintWriter out = resp.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Can not delete account login');");
+                    out.println("location='control-servlet?action=listAccount';");
+                    out.println("</script>");
+                }
                 boolean res = accountRepository.delete(String.valueOf(req.getParameter("id")));
                 if (res) {
                     resp.sendRedirect("control-servlet?action=listAccount");
@@ -177,8 +192,13 @@ public class ControlServlet extends HttpServlet {
             account.setFullName(req.getParameter("fullName"));
             account.setEmail(req.getParameter("email"));
             account.setPhone(req.getParameter("phone"));
-            Status status = Status.valueOf(req.getParameter("status"));
-            account.setStatus(status);
+            if(req.getParameter("status").equals("1")){
+                account.setStatus(Status.ACTIVE);
+            }else if(req.getParameter("status").equals("0")){
+                account.setStatus(Status.DEACTIVATE);
+            } else {
+                account.setStatus(Status.DELETE);
+            }
             boolean res = false;
             try {
                 res = accountRepository.create(account);
@@ -280,13 +300,18 @@ public class ControlServlet extends HttpServlet {
             }
         } else if (action.equals("editAccount")) {
             Account account = new Account();
-            account.setAccountId(req.getParameter("accountId"));
+            account.setAccountId(req.getParameter("account_id"));
             account.setPassword(req.getParameter("password"));
-            account.setFullName(req.getParameter("fullName"));
+            account.setFullName(req.getParameter("full_name"));
             account.setEmail(req.getParameter("email"));
             account.setPhone(req.getParameter("phone"));
-            Status status = Status.valueOf(req.getParameter("status"));
-            account.setStatus(status);
+            if(req.getParameter("status").equals("1")){
+                account.setStatus(Status.ACTIVE);
+            }else if(req.getParameter("status").equals("0")){
+                account.setStatus(Status.DEACTIVATE);
+            } else {
+                account.setStatus(Status.DELETE);
+            }
             try {
                 boolean res = accountRepository.update(account);
                 if (res) {

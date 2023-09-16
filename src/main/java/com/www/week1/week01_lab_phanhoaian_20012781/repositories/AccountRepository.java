@@ -37,7 +37,6 @@ public class AccountRepository {
         Connection con;
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
-        System.out.println(account);
         try {
             String sql = "INSERT into account VALUES(?,?,?,?,?,?)";
             statement = con.prepareStatement(sql);
@@ -60,14 +59,13 @@ public class AccountRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "UPDATE Account SET full_name=?, email=?, password=?, phone=?, status=? WHERE account_id=?";
+            String sql = "UPDATE account SET full_name=?, email=?, password=?, phone=?, status=? WHERE account_id=?";
             statement = con.prepareStatement(sql);
             statement.setString(1, account.getFullName());
             statement.setString(2, account.getEmail());
             statement.setString(3, account.getPassword());
             statement.setString(4, account.getPhone());
-            Status accountStatus = account.getStatus();
-            statement.setInt(5, accountStatus.getCode());
+            statement.setInt(5, account.getStatus().getCode());
             statement.setString(6, account.getAccountId());
             statement.executeUpdate();
             return true;
@@ -82,7 +80,7 @@ public class AccountRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "DELETE FROM Account WHERE account_id=?";
+            String sql = "DELETE FROM account WHERE account_id=?";
             statement = con.prepareStatement(sql);
             statement.setString(1, accountId);
             statement.executeUpdate();
@@ -98,7 +96,7 @@ public class AccountRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "SELECT * FROM Account WHERE account_id=?";
+            String sql = "SELECT * FROM account WHERE account_id=?";
             statement = con.prepareStatement(sql);
             statement.setString(1, accountId);
             ResultSet rs = statement.executeQuery();
@@ -146,25 +144,4 @@ public class AccountRepository {
             return Optional.empty();
         }
     }
-
-    //get role off account
-//    public List<Role> getRoleByAccount(String accountId) throws SQLException, ClassNotFoundException {
-//        Connection con;
-//        con = ConnectDB.getInstance().getConnection();
-//        PreparedStatement statement = null;
-//        List<String> listRole = new ArrayList<>();
-//        try {
-//            String sql = "SELECT * FROM account JOIN grant_access ON account.account_id = grant_access.account_id JOIN role ON grant_access.role_id = role.role_id WHERE account.account_id=?";
-//            statement = con.prepareStatement(sql);
-//            statement.setString(1, accountId);
-//            ResultSet rs = statement.executeQuery();
-//            while (rs.next()) {
-//                listRole.add(rs.getString("role_name"));
-//            }
-//            return listRole;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
 }

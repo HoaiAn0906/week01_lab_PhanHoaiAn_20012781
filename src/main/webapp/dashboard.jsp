@@ -1,4 +1,6 @@
 <%@ page import="com.www.week1.week01_lab_phanhoaian_20012781.models.Account" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.www.week1.week01_lab_phanhoaian_20012781.models.Role" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +11,6 @@
     <link rel="stylesheet" href="./bootstrap.min.css">
 </head>
 <body>
-<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-</nav>
 <div class="container">
     <div class="d-flex align-items-center justify-content-between">
         <h1>Dashboard</h1>
@@ -60,18 +60,33 @@
                             <% } %>
 
                             <%-- Hiển thị thông tin từ các cookie --%>
-                            <p><strong>Full Name:</strong> <%= fullName %></p>
-                            <p><strong>Email:</strong> <%= email %></p>
-                            <p><strong>Phone:</strong> <%= phone %></p>
+                            <p><strong>Full Name:</strong> <%= fullName %>
+                            </p>
+                            <p><strong>Email:</strong> <%= email %>
+                            </p>
+                            <p><strong>Phone:</strong> <%= phone %>
+                            </p>
                             <p><strong>Status:</strong> <span class="badge badge-primary"><%= status %></span></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card">
-                        <div class="card-header">Information Role</div>
+                        <div class="card-header">Role off account</div>
                         <div class="card-body">
-                            <p><strong>Test 1:</strong></p>
+                            <span>Name: </span>
+                            <% Object listRoleByAccount = request.getAttribute("listRoleByAccount");
+                                if (listRoleByAccount != null) {
+                                    List<Role> roles = (List<Role>) listRoleByAccount;
+                                    for (Role role : roles) {
+                            %>
+                            <span>
+                                <%= role.getRoleName() %>,
+                            </span>
+                            <% }
+                            } else { %>
+                            <p>Not found</p>
+                            <% } %>
                         </div>
                     </div>
                 </div>

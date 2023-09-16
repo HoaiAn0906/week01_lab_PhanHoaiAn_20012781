@@ -1,6 +1,5 @@
 <%@ page import="com.www.week1.week01_lab_phanhoaian_20012781.models.Role" %>
-<%@ page import="com.www.week1.week01_lab_phanhoaian_20012781.models.Account" %>
-<%@ page import="java.util.Optional" %><%--
+<%@ page import="com.www.week1.week01_lab_phanhoaian_20012781.models.Account" %><%--
   Created by IntelliJ IDEA.
   User: an
   Date: 13/09/2023
@@ -45,41 +44,37 @@
                         <div class="card-header">Edit account</div>
                         <div class="card-body">
                             <%
-                                Optional<Account> accountOptional = (Optional<Account>) request.getAttribute("account");
-                                System.out.println(accountOptional);
+                                Account account = (Account) request.getAttribute("account");
                             %>
-<%--                            <form action="control-servlet" method="post">--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="account_id">Account Id</label>--%>
-<%--                                    <input type="text" class="form-control" id="account_id" name="account_id" value="<%= account.getAccountId() %>">--%>
-<%--                                </div>--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="full_name">Account Name</label>--%>
-<%--                                    <input type="text" class="form-control" id="full_name" name="full_name" value="<%= account.getFullName() %>">--%>
-<%--                                </div>--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="password">Password</label>--%>
-<%--                                    <input type="password" class="form-control" id="password" name="password" value="<%= account.getPassword() %>">--%>
-<%--                                </div>--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="email">Email</label>--%>
-<%--                                    <input type="email" class="form-control" id="email" name="email" value="<%= account.getEmail() %>">--%>
-<%--                                </div>--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="phone">Phone</label>--%>
-<%--                                    <input type="number" class="form-control" id="phone" name="phone" value="<%= account.getPhone() %>">--%>
-<%--                                </div>--%>
-<%--                                <div class="form-group">--%>
-<%--                                    <label for="status">Status</label>--%>
-<%--                                    <select class="form-control" id="status" name="status">--%>
-<%--                                        <option value="1" <%= account.getStatus().getCode() == 1 ? "selected" : "" %>>Active</option>--%>
-<%--                                        <option value="0" <%= account.getStatus().getCode() == 0 ? "selected" : "" %>>DEACTIVATE</option>--%>
-<%--                                        <option value="-1" <%= account.getStatus().getCode() == -1 ? "selected" : "" %>>Delete</option>--%>
-<%--                                    </select>--%>
-<%--                                </div>--%>
-<%--                                <button type="submit" class="btn btn-primary">Submit</button>--%>
-<%--                                <input type="hidden" name="action" value="editAccount">--%>
-<%--                            </form>--%>
+                            <form action="control-servlet" method="post">
+                                <input type="hidden" name="account_id" value="<%= account.getAccountId() %>">
+                                <div class="form-group">
+                                    <label for="full_name">Account Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" value="<%= account.getFullName() %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" value="<%= account.getPassword() %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="<%= account.getEmail() %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="number" class="form-control" id="phone" name="phone" value="<%= account.getPhone() %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="1" <%= account.getStatus().getCode() == 1 ? "selected" : "" %>>Active</option>
+                                        <option value="0" <%= account.getStatus().getCode() == 0 ? "selected" : "" %>>DEACTIVATE</option>
+                                        <option value="-1" <%= account.getStatus().getCode() == -1 ? "selected" : "" %>>Delete</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <input type="hidden" name="action" value="editAccount">
+                            </form>
                         </div>
                     </div>
                 </div>

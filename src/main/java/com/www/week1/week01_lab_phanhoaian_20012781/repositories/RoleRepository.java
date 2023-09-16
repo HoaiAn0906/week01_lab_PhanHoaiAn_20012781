@@ -98,7 +98,6 @@ public class RoleRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            System.out.println("id test" + id);
             String sql = "DELETE FROM role WHERE role_id = ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, id);
@@ -107,6 +106,26 @@ public class RoleRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public List<Role> getRoleByAccount(String accountId) throws SQLException, ClassNotFoundException {
+        Connection con;
+        con = ConnectDB.getInstance().getConnection();
+        PreparedStatement statement = null;
+        List<Role> listRole = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM account JOIN grant_access ON account.account_id = grant_access.account_id JOIN role ON grant_access.role_id = role.role_id WHERE account.account_id=?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, accountId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                listRole.add(new Role(rs.getString("role_id"), rs.getString("role_name"), rs.getString("description"), Status.fromCode(rs.getInt("status"))));
+            }
+            return listRole;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
