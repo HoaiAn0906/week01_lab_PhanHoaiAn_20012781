@@ -21,6 +21,10 @@ public class Account {
         this.status = status;
     }
 
+    public Account(String accountId) {
+        this.accountId = accountId;
+    }
+
     public String getAccountId() {
         return accountId;
     }

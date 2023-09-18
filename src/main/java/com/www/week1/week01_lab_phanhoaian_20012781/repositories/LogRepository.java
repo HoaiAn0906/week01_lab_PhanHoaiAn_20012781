@@ -24,7 +24,7 @@ public class LogRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "Select * from log";
+            String sql = "Select * from log join account on log.account_id = account.account_id";
             statement = con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -97,13 +97,14 @@ public class LogRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "update log set account_id = ?, login_time = ?, logout_time = ?, notes = ? where id = ?";
+            //get log last
+            Logs logLast = this.getLastLogByAccountId(log.getAccount().getAccountId());
+            String sql = "update log set account_id = ?, logout_time = ?, notes = ? where id = ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, log.getAccount().getAccountId());
-            statement.setDate(2, java.sql.Date.valueOf(log.getLoginTime()));
-            statement.setDate(3, java.sql.Date.valueOf(log.getLogoutTime()));
-            statement.setString(4, log.getNotes());
-            statement.setString(5, log.getId());
+            statement.setDate(2, java.sql.Date.valueOf(log.getLogoutTime()));
+            statement.setString(3, log.getNotes());
+            statement.setString(4, logLast.getId());
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -125,6 +126,27 @@ public class LogRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public Logs getLastLogByAccountId(String accountId) throws SQLException, ClassNotFoundException {
+        Connection con;
+        con = ConnectDB.getInstance().getConnection();
+        PreparedStatement statement = null;
+        System.out.println(accountId);
+        try {
+            String sql = "select * from log where account_id = ? order by id desc limit 1";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, accountId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                Account account = new Account(rs.getString("account_id"));
+                return new Logs(rs.getString("id"), account, rs.getDate("login_time").toLocalDate(), rs.getString("notes"));
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

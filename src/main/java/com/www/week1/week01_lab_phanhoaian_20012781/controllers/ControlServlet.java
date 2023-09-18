@@ -77,7 +77,16 @@ public class ControlServlet extends HttpServlet {
         } else if (action.equals("dashboard")) {
             //get role of account
             try {
-                List<Role> listRoleByAccount = roleRepository.getRoleByAccount(req.getCookies()[0].getValue());
+                //get value cookie by key account_id
+                Cookie[] cookies = req.getCookies();
+                String accountId = "";
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("account_id")) {
+                        accountId = cookie.getValue();
+                    }
+                }
+                //get role of account
+                List<Role> listRoleByAccount = roleRepository.getRoleByAccount(accountId);
                 req.setAttribute("listRoleByAccount", listRoleByAccount);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("dashboard.jsp");
                 dispatcher.forward(req, resp);
@@ -85,9 +94,25 @@ public class ControlServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
         } else if (action.equals("logout")) {
-            System.out.println(req.getParameter("id"));
             // Lấy danh sách các cookie hiện tại
             Cookie[] cookies = req.getCookies();
+            //get account_id cookie
+            String accountId = "";
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("account_id")) {
+                    accountId = cookie.getValue();
+                }
+            }
+            //update logout_time
+            Logs log = new Logs();
+            log.setAccount(new Account(accountId));
+            log.setLogoutTime(java.time.LocalDate.now());
+            log.setNotes("logout");
+            try {
+                boolean res = new LogRepository().update(log);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
 
             if (cookies != null) {
                 // Lặp qua từng cookie và đặt thời gian sống của nó thành 0 để xóa cookie
@@ -150,6 +175,15 @@ public class ControlServlet extends HttpServlet {
         } else if (action.equals("addAccount")) {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/account/add_account.jsp");
             dispatcher.forward(req, resp);
+        } else if (action.equals("listLog")) {
+            try {
+                List<Logs> listLog = new LogRepository().getAll();
+                req.setAttribute("listLog", listLog);
+                RequestDispatcher dispatcher = req.getRequestDispatcher("/log/logs.jsp");
+                dispatcher.forward(req, resp);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
