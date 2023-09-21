@@ -52,7 +52,7 @@
                     <a href="control-servlet?action=listRole">Role</a>
                 </li>
                 <li class="list-group-item">
-                    <a href="control-servlet?action=listLog">Role</a>
+                    <a href="control-servlet?action=listLog">Log</a>
                 </li>
             </ul>
         </div>

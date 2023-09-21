@@ -35,7 +35,9 @@
                 <li class="list-group-item">
                     <a href="control-servlet?action=listRole">Role</a>
                 </li>
-                <li class="list-group-item"><a href="">Log</a></li>
+                <li class="list-group-item">
+                    <a href="control-servlet?action=listLog">Log</a>
+                </li>
             </ul>
         </div>
         <div class="col-md-10">

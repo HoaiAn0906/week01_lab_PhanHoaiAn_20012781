@@ -5,10 +5,9 @@ import com.www.week1.week01_lab_phanhoaian_20012781.models.Account;
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Logs;
 import com.www.week1.week01_lab_phanhoaian_20012781.models.Status;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +23,21 @@ public class LogRepository {
         con = ConnectDB.getInstance().getConnection();
         PreparedStatement statement = null;
         try {
-            String sql = "Select * from log join account on log.account_id = account.account_id";
+            String sql = "Select * from log join account on log.account_id = account.account_id order by login_time desc";
             statement = con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Account account = new Account(rs.getString("account_id"), rs.getString("full_name"), rs.getString("password"),
                         rs.getString("email"), rs.getString("phone"), Status.fromCode(rs.getInt("status")));
-                listLog.add(new Logs(rs.getString("id"), account, rs.getDate("login_time").toLocalDate(), rs.getDate("logout_time").toLocalDate(), rs.getString("notes")));
+                //if logout_time is null
+                if (rs.getDate("logout_time") == null) {
+                    listLog.add(new Logs(rs.getString("id"), account, new Timestamp(rs.getTimestamp("login_time").getTime()), rs.getString("notes")));
+                } else {
+                    listLog.add(new Logs(rs.getString("id"), account, new Timestamp(rs.getTimestamp("login_time").getTime()), new Timestamp(rs.getTimestamp("logout_time").getTime()), rs.getString("notes")));
+                }
             }
 
+            System.out.println(listLog);
             return listLog;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -52,7 +57,7 @@ public class LogRepository {
             if (rs.next()) {
                 Account account = new Account(rs.getString("account_id"), rs.getString("full_name"), rs.getString("password"),
                         rs.getString("email"), rs.getString("phone"), Status.fromCode(rs.getInt("status")));
-                return new Logs(rs.getString("id"), account, rs.getDate("login_time").toLocalDate(), rs.getDate("logout_time").toLocalDate(), rs.getString("notes"));
+                return new Logs(rs.getString("id"), account, new Timestamp(rs.getTimestamp("login_time").getTime()), new Timestamp(rs.getTimestamp("logout_time").getTime()), rs.getString("notes"));
             }
             return null;
         } catch (SQLException e) {
@@ -71,14 +76,14 @@ public class LogRepository {
                 sql = "insert into log(account_id, logout_time, notes) values(?, ?, ?)";
                 statement = con.prepareStatement(sql);
                 statement.setString(1, log.getAccount().getAccountId());
-                statement.setDate(2, java.sql.Date.valueOf(log.getLogoutTime()));
+                statement.setTimestamp(2, new Timestamp(log.getLogoutTime().getTime()));
                 statement.setString(3, log.getNotes());
                 statement.executeUpdate();
             } else {
                 sql = "insert into log(account_id, login_time, logout_time, notes) values(?, ?, ?, ?)";
                 statement = con.prepareStatement(sql);
                 statement.setString(1, log.getAccount().getAccountId());
-                statement.setDate(2, java.sql.Date.valueOf(log.getLoginTime()));
+                statement.setTimestamp(2, new Timestamp(log.getLoginTime().getTime()));
                 //set value null
                 statement.setDate(3, null);
                 statement.setString(4, log.getNotes());
@@ -102,7 +107,7 @@ public class LogRepository {
             String sql = "update log set account_id = ?, logout_time = ?, notes = ? where id = ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, log.getAccount().getAccountId());
-            statement.setDate(2, java.sql.Date.valueOf(log.getLogoutTime()));
+            statement.setTimestamp(2, new Timestamp(log.getLogoutTime().getTime()));
             statement.setString(3, log.getNotes());
             statement.setString(4, logLast.getId());
             statement.executeUpdate();
@@ -141,7 +146,11 @@ public class LogRepository {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 Account account = new Account(rs.getString("account_id"));
-                return new Logs(rs.getString("id"), account, rs.getDate("login_time").toLocalDate(), rs.getString("notes"));
+                if (rs.getDate("logout_time") == null) {
+                    return new Logs(rs.getString("id"), account, new Timestamp(rs.getTimestamp("login_time").getTime()), rs.getString("notes"));
+                } else {
+                    return new Logs(rs.getString("id"), account, new Timestamp(rs.getTimestamp("login_time").getTime()), new Timestamp(rs.getTimestamp("logout_time").getTime()), rs.getString("notes"));
+                }
             }
             return null;
         } catch (SQLException e) {

@@ -19,7 +19,9 @@ import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,7 +108,7 @@ public class ControlServlet extends HttpServlet {
             //update logout_time
             Logs log = new Logs();
             log.setAccount(new Account(accountId));
-            log.setLogoutTime(java.time.LocalDate.now());
+            log.setLogoutTime(new Timestamp(System.currentTimeMillis()));
             log.setNotes("logout");
             try {
                 boolean res = new LogRepository().update(log);
@@ -209,7 +211,8 @@ public class ControlServlet extends HttpServlet {
                     System.out.println(account);
                     Logs log = new Logs();
                     log.setAccount(account.get());
-                    log.setLoginTime(java.time.LocalDate.now());
+                    //yyyy mm dd hh:mm:ss
+                    log.setLoginTime(new Timestamp(System.currentTimeMillis()));
                     log.setNotes("login");
                     logRepository.create(log);
                     //save account to cookie
@@ -240,9 +243,9 @@ public class ControlServlet extends HttpServlet {
             account.setFullName(req.getParameter("fullName"));
             account.setEmail(req.getParameter("email"));
             account.setPhone(req.getParameter("phone"));
-            if(req.getParameter("status").equals("1")){
+            if (req.getParameter("status").equals("1")) {
                 account.setStatus(Status.ACTIVE);
-            }else if(req.getParameter("status").equals("0")){
+            } else if (req.getParameter("status").equals("0")) {
                 account.setStatus(Status.DEACTIVATE);
             } else {
                 account.setStatus(Status.DELETE);
@@ -271,9 +274,9 @@ public class ControlServlet extends HttpServlet {
             role.setRoleId(req.getParameter("role_id"));
             role.setRoleName(req.getParameter("role_name"));
             role.setDescription(req.getParameter("description"));
-            if(req.getParameter("status").equals("1")){
+            if (req.getParameter("status").equals("1")) {
                 role.setStatus(Status.ACTIVE);
-            }else if(req.getParameter("status").equals("0")){
+            } else if (req.getParameter("status").equals("0")) {
                 role.setStatus(Status.DEACTIVATE);
             } else {
                 role.setStatus(Status.DELETE);
@@ -297,9 +300,9 @@ public class ControlServlet extends HttpServlet {
             role.setRoleId(req.getParameter("role_id"));
             role.setRoleName(req.getParameter("role_name"));
             role.setDescription(req.getParameter("description"));
-            if(req.getParameter("status").equals("1")){
+            if (req.getParameter("status").equals("1")) {
                 role.setStatus(Status.ACTIVE);
-            }else if(req.getParameter("status").equals("0")){
+            } else if (req.getParameter("status").equals("0")) {
                 role.setStatus(Status.DEACTIVATE);
             } else {
                 role.setStatus(Status.DELETE);
@@ -325,9 +328,9 @@ public class ControlServlet extends HttpServlet {
             account.setFullName(req.getParameter("full_name"));
             account.setEmail(req.getParameter("email"));
             account.setPhone(req.getParameter("phone"));
-            if(req.getParameter("status").equals("1")){
+            if (req.getParameter("status").equals("1")) {
                 account.setStatus(Status.ACTIVE);
-            }else if(req.getParameter("status").equals("0")){
+            } else if (req.getParameter("status").equals("0")) {
                 account.setStatus(Status.DEACTIVATE);
             } else {
                 account.setStatus(Status.DELETE);
@@ -353,9 +356,9 @@ public class ControlServlet extends HttpServlet {
             account.setFullName(req.getParameter("full_name"));
             account.setEmail(req.getParameter("email"));
             account.setPhone(req.getParameter("phone"));
-            if(req.getParameter("status").equals("1")){
+            if (req.getParameter("status").equals("1")) {
                 account.setStatus(Status.ACTIVE);
-            }else if(req.getParameter("status").equals("0")){
+            } else if (req.getParameter("status").equals("0")) {
                 account.setStatus(Status.DEACTIVATE);
             } else {
                 account.setStatus(Status.DELETE);
@@ -395,5 +398,10 @@ public class ControlServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doDelete(req, resp);
     }
 }

@@ -41,7 +41,7 @@
                     <a href="control-servlet?action=listRole">Role</a>
                 </li>
                 <li class="list-group-item">
-                    <a href="control-servlet?action=listLog">Role</a>
+                    <a href="control-servlet?action=listLog">Log</a>
                 </li>
             </ul>
         </div>
@@ -83,7 +83,12 @@
                             <%= log.getLoginTime() %>
                         </td>
                         <td>
-                            <%= log.getLogoutTime() %>
+                            <% if (log.getLogoutTime() == null) {
+                                out.println("Chưa logout");
+                            } else {
+                                out.println(log.getLogoutTime());
+                            }
+                            %>
                         </td>
                     </tr>
                     <% }

@@ -1,15 +1,20 @@
 package com.www.week1.week01_lab_phanhoaian_20012781.models;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 public class Logs {
     private String id;
     private Account account;
-    private LocalDate loginTime;
-    private LocalDate logoutTime;
+
+    private Timestamp loginTime;
+
+    private Timestamp logoutTime;
     private String notes;
 
-    public Logs(String id, Account account, LocalDate loginTime, LocalDate logoutTime, String notes) {
+    public Logs() {
+    }
+
+    public Logs(String id, Account account, Timestamp loginTime, Timestamp logoutTime, String notes) {
         this.id = id;
         this.account = account;
         this.loginTime = loginTime;
@@ -17,14 +22,17 @@ public class Logs {
         this.notes = notes;
     }
 
-    public Logs() {
-    }
-
-    public Logs(String id, Account account, LocalDate loginTime, String notes) {
+    public Logs(String id, Account account, Timestamp loginTime, String notes) {
         this.id = id;
         this.account = account;
         this.loginTime = loginTime;
         this.notes = notes;
+    }
+
+    public Logs(String id, Account account, Timestamp logoutTime) {
+        this.id = id;
+        this.account = account;
+        this.logoutTime = logoutTime;
     }
 
     public String getId() {
@@ -43,19 +51,19 @@ public class Logs {
         this.account = account;
     }
 
-    public LocalDate getLoginTime() {
+    public Timestamp getLoginTime() {
         return loginTime;
     }
 
-    public void setLoginTime(LocalDate loginTime) {
+    public void setLoginTime(Timestamp loginTime) {
         this.loginTime = loginTime;
     }
 
-    public LocalDate getLogoutTime() {
+    public Timestamp getLogoutTime() {
         return logoutTime;
     }
 
-    public void setLogoutTime(LocalDate logoutTime) {
+    public void setLogoutTime(Timestamp logoutTime) {
         this.logoutTime = logoutTime;
     }
 
